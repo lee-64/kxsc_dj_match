@@ -31,66 +31,49 @@ export default function Results() {
   useEffect(() => {
     const fetchResults = async () => {
       try {
-        // Check if we have cached results and they're not expired
+        // Check for cached results
         const cachedData = localStorage.getItem('djMatchResults');
-        console.log("cachedData", cachedData);
         if (cachedData) {
           const {results, timestamp} = JSON.parse(cachedData);
-          console.log("results", results);
-          console.log("timestamp", timestamp);
-
           const now = new Date().getTime();
-          console.log("now", now);
           const cacheAge = now - timestamp;
-          console.log("cacheAge", cacheAge);
-          // const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
           const CACHE_DURATION = 1000 * 60 * 5;
 
           if (cacheAge < CACHE_DURATION) {
-            console.log("cacheAge is less than CACHE_DURATION");
             setMatchData(results);
             setIsLoading(false);
-            console.log("grabbed cache");
             return;
           } else {
-            // Clear expired cache
             localStorage.removeItem('djMatchResults');
           }
         }
 
-        // Fetch the data from /api/results backend if no valid cache
         const response = await fetchWithTimeout('/api/results', 45000);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
         const data = await response.json();
 
-        // Cache the results with timestamp
-        const cacheData = {
-          results: data.results,
-          timestamp: new Date().getTime()
-        };
-
         try {
-          localStorage.setItem('djMatchResults', JSON.stringify(cacheData));
+          localStorage.setItem('djMatchResults', JSON.stringify({
+            results: data.results,
+            timestamp: new Date().getTime()
+          }));
         } catch (storageError) {
-          // Handle storage errors (e.g., quota exceeded)
           console.warn('Failed to cache results:', storageError);
         }
 
         setMatchData(data.results);
-
       } catch (error) {
         console.error('Error fetching results:', error);
         setError(error.message);
 
-        // Try to fall back to cached data if API fails
+        // Try to fall back to cached data
         try {
           const cachedData = localStorage.getItem('djMatchResults');
           if (cachedData) {
             const {results} = JSON.parse(cachedData);
             setMatchData(results);
-
             setError('Using cached data - Unable to fetch latest results');
           }
         } catch (fallbackError) {
@@ -100,32 +83,28 @@ export default function Results() {
         setIsLoading(false);
       }
     };
+
     fetchResults();
   }, []);
 
-  // Only called if there has been an error in the matching process that requires a reload of the API calls
   const handleReload = async () => {
     try {
       setIsLoading(true);
       setError(null);
       localStorage.removeItem('djMatchResults');
 
-      // Fetch the data from /api/results backend
       const response = await fetchWithTimeout('/api/results', 45000);
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
 
-      // Cache the new results
-      const cacheData = {
+      localStorage.setItem('djMatchResults', JSON.stringify({
         results: data.results,
         timestamp: new Date().getTime()
-      };
+      }));
 
-      localStorage.setItem('djMatchResults', JSON.stringify(cacheData));
       setMatchData(data.results);
-
     } catch (error) {
       console.error('Error fetching new results:', error);
       setError('Failed to get new match. Please try again later.');
@@ -134,7 +113,17 @@ export default function Results() {
     }
   };
 
-  const selectedArtists = JSON.parse(localStorage.getItem('selectedArtists') || '[]');
+  // Get selectedArtists from localStorage once when component mounts
+  const selectedArtists = (() => {
+    try {
+      const stored = localStorage.getItem('selectedArtists');
+      return stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      console.error('Error reading selectedArtists from localStorage:', e);
+      return [];
+    }
+  })();
+
   const artistNames = selectedArtists.map(artist => artist.name);
 
   if (isLoading) {
