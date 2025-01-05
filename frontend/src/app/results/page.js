@@ -173,7 +173,7 @@ export default function Results() {
                     </span>
                     <span className="mx-2">•</span>
                     <Radio className="w-4 h-4"/>
-                    <p className="font-mono tracking-tighter">"{matchData.show_name}"</p>
+                    <p className="font-mono tracking-tighter">&ldquo;{matchData.show_name}&rdquo;</p>
                   </span>
                 }
                 fullWidth={true}
