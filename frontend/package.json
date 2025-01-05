@@ -19,6 +19,7 @@
     "use-debounce": "^10.0.4"
   },
   "devDependencies": {
+    "@babel/eslint-parser": "^7.25.9",
     "@eslint/eslintrc": "^3",
     "eslint": "^9",
     "eslint-config-next": "15.1.3",
