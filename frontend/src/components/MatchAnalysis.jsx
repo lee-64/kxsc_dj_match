@@ -1,6 +1,7 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
-import Plot from 'react-plotly.js';
+import dynamic from 'next/dynamic';
+const Plot = dynamic(()=> {return import ("react-plotly.js")}, {ssr: false})
 
 export default function MatchAnalysis({ figure }) {
   const containerRef = useRef(null);
