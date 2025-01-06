@@ -4,7 +4,9 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://127.0.0.1:5000/api/:path*'  // Flask server URL
+        destination: process.env.NODE_ENV === 'development'
+          ? 'http://127.0.0.1:5000/api/:path*'  // Local Flask development
+          : 'https://kxsc-dj-match-fokg.onrender.com/api/:path*'  // Production
       }
     ]
   }
