@@ -1,25 +1,14 @@
 import pandas as pd
 import requests
 import time
-import json
 import os
+from dotenv import load_dotenv
+import json
 
-
-def load_acousticbrainz_config():
-    cur_dir = os.path.dirname(os.path.abspath(__file__))
-    parent_dir = os.path.dirname(cur_dir)
-    config_path = os.path.join(parent_dir, 'config', 'config.json')
-
-    with open(config_path) as config_file:
-        return json.load(config_file)
-
-
-# TODO convert config to Class to avoid global variable declarations
-config = load_acousticbrainz_config()
-
-ab_base_url = config['acousticbrainz']['base_url']
-headers = config['acousticbrainz']['headers']
-rate_delay = config['acousticbrainz']['rate_delay']
+load_dotenv()
+ab_base_url = os.getenv('AB_BASE_URL')
+headers = json.loads(os.getenv('AB_HEADERS'))
+rate_delay = float(os.getenv('AB_RATE_DELAY'))
 
 
 def get_feature_data(row: pd.Series) -> pd.Series:

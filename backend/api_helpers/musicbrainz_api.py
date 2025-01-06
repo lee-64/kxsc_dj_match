@@ -1,7 +1,11 @@
 import musicbrainzngs
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Initialize MusicBrainz
-musicbrainzngs.set_useragent('KXSC_DJ_Match', '0.0', 'lstilwe@usc.edu')
+musicbrainzngs.set_useragent(os.getenv('MB_APP'), os.getenv('MB_VER'), os.getenv('MB_CONTACT'))
 
 
 def get_track_id(artist_mbid, track_name):

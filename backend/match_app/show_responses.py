@@ -1,30 +1,39 @@
 import pandas as pd
 import os
+from pymongo.mongo_client import MongoClient
+from dotenv import load_dotenv
+
+load_dotenv()
+uri = os.getenv('MONGO_CONNECTION_URI')
 
 
 def get_dj_show_info(dj_id):
+    dj_id = int(dj_id)  # Cast dj_id from numpy.int64 to an int
+
     # Read in the data from the show responses Excel file
-    show_responses_path = os.path.join(os.getcwd(), 'data', 'kxsc_fall24_show_responses.xlsx')
-    responses = pd.read_excel(show_responses_path, engine='openpyxl')
+    client = MongoClient(uri)
+    db = client['djs']
+    collection = db['show_responses']
 
     # All tracks played on KXSC
     tracks_df = pd.read_csv(os.path.join(os.getcwd(), 'data', 'sliced_ab_data.csv'))
 
     show_info = {
-        'show_name': get_show_name(dj_id, responses),
-        'timeslot': get_timeslot(dj_id, responses),
-        'about_me': get_about_me(dj_id, responses),
-        'mission_statement': get_mission_statement(dj_id, responses),
+        'show_name': get_show_name(dj_id, collection),
+        'timeslot': get_timeslot(dj_id, collection),
+        'about_me': get_about_me(dj_id, collection),
+        'mission_statement': get_mission_statement(dj_id, collection),
         'recent_songs': get_recent_songs(dj_id, tracks_df)
     }
 
+    client.close()
     return show_info
 
 
 def get_show_name(dj_id, responses):
     # Show name
     try:
-        show_name = responses.loc[responses['DJ ID'] == dj_id, 'Name of your show'].iloc[0]
+        show_name = responses.find_one({'DJ ID': dj_id})['Name of your show']
         if pd.isna(show_name):
             raise ValueError('Show Name is missing')
     except Exception as e:
@@ -37,11 +46,11 @@ def get_show_name(dj_id, responses):
 def get_timeslot(dj_id, responses):
     # Timeslot
     try:
-        timeslot = responses.loc[responses['DJ ID'] == dj_id, 'Timeslot'].iloc[0]
+        timeslot = responses.find_one({'DJ ID': dj_id})['Timeslot']
         if pd.isna(timeslot):
             raise ValueError('Timeslot is missing')
     except Exception as e:
-        timeslot = "See this DJ's time"
+        timeslot = "See this DJ's time"  # ... at kxsc.org
 
     timeslot = timeslot.strip()
     return timeslot
@@ -50,11 +59,11 @@ def get_timeslot(dj_id, responses):
 def get_about_me(dj_id, responses):
     # About me
     try:
-        about_me = responses.loc[responses['DJ ID'] == dj_id, 'About Show'].iloc[0]
+        about_me = responses.find_one({'DJ ID': dj_id})['About Show']
         if pd.isna(about_me):
             raise ValueError('About Me is missing')
     except Exception as e:
-        about_me = 'This DJ does not have any About Show'
+        about_me = 'This DJ does not have an About section.'
 
     about_me = about_me.strip()
     return about_me
@@ -63,11 +72,11 @@ def get_about_me(dj_id, responses):
 def get_mission_statement(dj_id, responses):
     # Mission statement
     try:
-        mission_statement = responses.loc[responses['DJ ID'] == dj_id, 'Mission Statement'].iloc[0]
+        mission_statement = responses.find_one({'DJ ID': dj_id})['Mission Statement']
         if pd.isna(mission_statement):
             raise ValueError('Mission Statement is missing')
     except Exception as e:
-        mission_statement = 'No mission statement'
+        mission_statement = 'No mission statement.'
 
     mission_statement = mission_statement.strip()
     return mission_statement
