@@ -5,7 +5,6 @@ import math
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.preprocessing import StandardScaler
 import plotly.graph_objects as go
-import plotly.io as pio
 from .user import User
 from .dj import DJ
 
