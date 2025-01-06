@@ -116,6 +116,7 @@ export default function Results() {
   // Get selectedArtists from localStorage once when component mounts
   const selectedArtists = (() => {
     try {
+      // TODO localStorage.getItem('selectedArtists') should only be accessed during the LoadingScreen. If the user simply refreshes the results page (and so the LoadingScreen isn't used), selectedArtists should not be accessed.
       const stored = localStorage.getItem('selectedArtists');
       return stored ? JSON.parse(stored) : [];
     } catch (e) {
@@ -133,7 +134,7 @@ export default function Results() {
 
   if (error) {
     return (
-        <div className="min-h-screen bg-black text-white flex flex-col items-center justify-center">
+        <div className="min-h-screen text-gray-200 flex flex-col items-center justify-center">
           <p className="text-red-500 mb-4">Error: {error}</p>
           <button
               onClick={handleReload}
