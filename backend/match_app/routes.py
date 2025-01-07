@@ -1,9 +1,19 @@
-from flask import render_template, redirect, url_for, request, session, jsonify
-import pandas as pd
+from flask import request, session, jsonify
 import os
 from . import app
 from .match import get_matches, spider_plot
 from .show_responses import get_dj_show_info
+from pymongo import MongoClient
+from dotenv import load_dotenv
+
+
+# Initialize MongoDB connection at startup
+load_dotenv()
+client = MongoClient(os.getenv('MONGO_CONNECTION_URI'))
+artists_collection = client['artists']['artist_names_and_mbids']
+
+# Create a text index on the name field
+artists_collection.create_index([('name', 'text')])
 
 
 @app.route('/api/mood', methods=['POST'])
@@ -48,8 +58,6 @@ def results():
 
     fig = spider_plot(user_features, dj_features, match_name)
 
-
-
     results = ({
         'dj_match': match_name,
         'top_djs': top_dj_names,
@@ -73,10 +81,16 @@ def search_artists():
     if not query:
         return jsonify({'error': 'Query parameter is required.'}), 400
 
-    # First, try searching artist_names_and_mbids.csv for the user's query
-    artists_df = pd.read_csv(os.path.join(os.getcwd(), 'data', 'artist_names_and_mbids.csv'))
-    query_results = artists_df[artists_df['name'].str.contains(query, case=False, na=False)][:3]
-    artists_data = query_results.to_dict(orient='records')
+    artists_data = list(artists_collection.find(
+        {"$text": {"$search": query}},
+        {"score": {"$meta": "textScore"}}
+    ).sort([
+        ("score", {"$meta": "textScore"})
+    ]).limit(3))
+
+    # Clean up the ObjectId for JSON serialization
+    for artist in artists_data:
+        artist['_id'] = str(artist['_id'])
     print(artists_data)
 
     return jsonify({'artists_data': artists_data}), 200
