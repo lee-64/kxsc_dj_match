@@ -1,16 +1,14 @@
 import pandas as pd
-import os
-from pymongo import MongoClient
+from match_app.database_connection import get_db
 from pymongo.errors import DuplicateKeyError
 from api_helpers import acousticbrainz_api
 from dotenv import load_dotenv
 
 load_dotenv()
-uri = os.getenv('MONGO_CONNECTION_URI')
 
 
 def get_connection():
-    client = MongoClient(uri)
+    client = get_db()
     db = client['users']
     collection = db['searched_ab_tracks']
     return client, collection

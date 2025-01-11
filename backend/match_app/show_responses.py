@@ -1,19 +1,20 @@
 import pandas as pd
 import os
-from pymongo.mongo_client import MongoClient
+from .database_connection import get_db
 from dotenv import load_dotenv
 
 load_dotenv()
-uri = os.getenv('MONGO_CONNECTION_URI')
 
 
 def get_dj_show_info(dj_id):
     dj_id = int(dj_id)  # Cast dj_id from numpy.int64 to an int
 
     # Read in the data from the show responses Excel file
-    client = MongoClient(uri)
+    # Get fresh connection
+    client = get_db()
     db = client['djs']
     collection = db['show_responses']
+
 
     # All tracks played on KXSC
     tracks_df = pd.read_csv(os.path.join(os.getcwd(), 'data', 'sliced_ab_data.csv'))

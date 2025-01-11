@@ -3,17 +3,10 @@ import os
 from . import app
 from .match import get_matches, spider_plot
 from .show_responses import get_dj_show_info
-from pymongo import MongoClient
+from .database_connection import get_db
 from dotenv import load_dotenv
 
-
-# Initialize MongoDB connection at startup
 load_dotenv()
-client = MongoClient(os.getenv('MONGO_CONNECTION_URI'))
-artists_collection = client['artists']['artist_names_and_mbids']
-
-# Create a text index on the name field
-artists_collection.create_index([('name', 'text')])
 
 
 @app.route('/api/mood', methods=['POST'])
@@ -81,6 +74,14 @@ def search_artists():
     if not query:
         return jsonify({'error': 'Query parameter is required.'}), 400
 
+    # Get fresh connection for each request
+    client = get_db()
+    artists_collection = client['artists']['artist_names_and_mbids']
+
+    # Create a text index on the name field
+    artists_collection.create_index([('name', 'text')])
+
+    # TODO sort relevant artist responses by popularity
     artists_data = list(artists_collection.find(
         {"$text": {"$search": query}},
         {"score": {"$meta": "textScore"}}
@@ -91,6 +92,10 @@ def search_artists():
     # Clean up the ObjectId for JSON serialization
     for artist in artists_data:
         artist['_id'] = str(artist['_id'])
+
+    # Close the connection after use
+    client.close()
+
     print(artists_data)
 
     return jsonify({'artists_data': artists_data}), 200
