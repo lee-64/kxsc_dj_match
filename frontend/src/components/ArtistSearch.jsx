@@ -43,7 +43,6 @@ export default function ArtistSearch({ onAddArtist, disabled }) {
     fetchSuggestions(debouncedInput);
   }, [debouncedInput, fetchSuggestions]);
 
-  // Update showDropdown when we have input and suggestions
   useEffect(() => {
     if (debouncedInput && suggestions.length > 0) {
       setShowDropdown(true);
@@ -71,7 +70,6 @@ export default function ArtistSearch({ onAddArtist, disabled }) {
   };
 
   const handleFocus = () => {
-    // Show dropdown on focus if we have input and suggestions
     if (input && suggestions.length > 0) {
       setShowDropdown(true);
     }
@@ -86,39 +84,42 @@ export default function ArtistSearch({ onAddArtist, disabled }) {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (input.trim() === '') return;
-    onAddArtist(input.trim());
-    setInput('');
-    setShowDropdown(false);
+  const handleKeyDown = (e) => {
+    // Prevent form submission on Enter key
+    if (e.key === 'Enter') {
+      e.preventDefault();
+    }
   };
 
   return (
     <div className="relative" ref={containerRef}>
-      <form onSubmit={handleSubmit}>
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-          <input
-            type="text"
-            value={input}
-            onChange={handleChange}
-            onFocus={handleFocus}
-            placeholder="Type an artist name"
-            className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pl-10 pr-12 focus:outline-none focus:ring-2 focus:ring-purple-500/50 placeholder-gray-500 text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={disabled}
-            aria-autocomplete="list"
-            aria-expanded={showDropdown}
-            aria-controls="autocomplete-list"
-            aria-activedescendant=""
-          />
-          {loading && (
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-              <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
-            </div>
-          )}
-        </div>
-      </form>
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+        <input
+        type="text"
+          value={input}
+          onChange={handleChange}
+          onFocus={handleFocus}
+          onKeyDown={handleKeyDown}
+          autoComplete="new-password"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
+          role="combobox"
+          placeholder="Type an artist name"
+          className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 pl-10 pr-12 focus:outline-none focus:ring-2 focus:ring-purple-500/50 placeholder-gray-500 text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          disabled={disabled}
+          aria-autocomplete="list"
+          aria-expanded={showDropdown}
+          aria-controls="autocomplete-list"
+          aria-activedescendant=""
+        />
+        {loading && (
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+            <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
+          </div>
+        )}
+      </div>
 
       {error && (
         <div className="mt-2 text-red-400 text-sm">
