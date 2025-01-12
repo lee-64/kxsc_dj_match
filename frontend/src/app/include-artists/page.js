@@ -55,7 +55,6 @@ export default function IncludeArtists() {
       });
       if (response.status === 200) {
         router.push('/results');
-        // setStatus('success');
       } else {
         setStatus('error');
         setErrorMessage('Failed to submit artists. Please try again.');

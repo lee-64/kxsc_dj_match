@@ -45,7 +45,6 @@ def modify_ab_db(mb_df):
             return new_ab_df  # Return the all-NA new_ab_df (which is ok because it has the correct features)
         else:
             entire_ab_df = pd.concat(dfs_to_concat, ignore_index=True)
-            print("entire_ab_df:", entire_ab_df)
             return entire_ab_df
     finally:
         client.close()
