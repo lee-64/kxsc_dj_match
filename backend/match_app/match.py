@@ -12,8 +12,6 @@ from .dj import DJ
 def get_matches(mood, user_artists, user_tracks):
     tracks_df = pd.read_csv(os.path.join(os.getcwd(), 'data', 'sliced_ab_data.csv'))
 
-    print("user_artists", user_artists)
-
     # TODO future version: include the genres and key major/minor as dummies in calculation
 
     # Initialize DJs
@@ -35,12 +33,8 @@ def get_matches(mood, user_artists, user_tracks):
     dj_scaled_matrix = scaler.transform(dj_matrix)
     user_scaled_vector = scaler.transform(user_vector)
 
-
-
-
     # TODO if user_vector contains some NA values (eg high-level data get didnt work), cosine similarity will throw error
     feature_similarities = cosine_similarity(user_scaled_vector, dj_scaled_matrix).flatten()  # shape: (num_djs, )
-
 
     # TODO Include "same song matches" and "same artist" matches in the calculation. Use song NAME instead of mbid alongside artist_mbid, since there can be multiple mbids for one song (but generally only 1 artist_mbid).
     # Calculate artist overlap scores with frequency weighting
@@ -58,7 +52,6 @@ def get_matches(mood, user_artists, user_tracks):
                 # Add normalized frequency for each matching artist
                 # Log scale to prevent extremely frequent plays from dominating
                 weighted_overlap += np.log1p(dj_artist_frequencies[artist_id])
-                print("weighted overlap for dj", dj.get_name(), ":", weighted_overlap)
 
         # Normalize by number of user artists and max possible frequency
         max_possible_freq = np.log1p(dj.get_tracks()['artist_id'].value_counts().max())
@@ -68,22 +61,16 @@ def get_matches(mood, user_artists, user_tracks):
     alpha = 0.85  # Feature similarity weight
     beta = 0.15   # Artist overlap weight
 
-    print("artist_overlap_scores", artist_overlap_scores)
     overall_scores = (alpha * feature_similarities + beta * artist_overlap_scores)
 
 
     # TODO Add genre similarity, much like how users can select a Mood
 
-
     # TODO Angular Similarity for further spacing between the top 5 dj matches
     # ang_similarities = angular_similarity(cos_similarities)
-    # print(ang_similarities)
 
     top_n = 5
     top_n_indices = overall_scores.argsort()[-top_n:][::-1]  # Sort in desc order + pick best n
-
-
-
 
     matched_djs = [
         {
@@ -135,7 +122,6 @@ def spider_plot(user_vector, dj_vector, dj_name):
     # in a big-picture feature data visualization. However, they are similar enough that its exclusion should not cloud
     # any conclusions the user might draw.
     # So, 'Danceability Probability/Confidence' located at index i=4 is removed from the visualization only.
-
     user_vector_mod = np.delete(user_vector, 4)
     dj_vector_mod = np.delete(dj_vector, 4)
 
@@ -189,8 +175,3 @@ def prettify_theta(column_names):
     renamed_cols = [name_mapping.get(col) for col in column_names]
 
     return renamed_cols
-
-
-
-if __name__ == '__main__':
-    get_matches()

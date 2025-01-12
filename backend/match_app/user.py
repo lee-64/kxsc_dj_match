@@ -64,8 +64,6 @@ class User:
             user_prob = calculate_probabilistic_scores(user_df, binary_feature_cols, confidence_feature_cols)
             avg_user_features = user_prob[feature_cols].mean().to_numpy()
 
-
-
             # Apply the mood transformation
             alpha = 0.7  # Weight: 70% for global mood average, 30% for user mood average
             transformed_mood_features = alpha * avg_mood_features + (1 - alpha) * avg_user_features
@@ -90,7 +88,7 @@ class User:
 
         # Append any songs the user submitted
         # if self.songs is not None:
-        #     songs_df =
+        #     songs_df = ...
 
         u_df.dropna(inplace=True)
         return u_df
@@ -129,8 +127,6 @@ def create_artists_df(artist_names, artist_mbids):
                     }
                 )
 
-            # time.sleep(0.25)  # Rate limiting
-
     mb_df = pd.DataFrame(mb_tracks)
 
     # AcousticBrainz data
@@ -139,7 +135,6 @@ def create_artists_df(artist_names, artist_mbids):
         return ab_df
 
     # TODO
-    print('yet to be created else clause in create_artists_df')
     return ...
 
 
