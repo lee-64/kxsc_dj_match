@@ -8,10 +8,10 @@ export default function Hero({ header, description, fullWidth = false }) {
                 className={`backdrop-blur-sm bg-white/5 border border-white/10 rounded-2xl p-8 shadow-2xl ${
                     fullWidth ? '' : 'max-w-2xl mx-auto'
                 }`}>
-                <h2 className="text-6xl font-bold mb-4 font-mono tracking-tight">
+                <h2 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl xl:text-7xl font-bold mb-4 font-mono tracking-tight break-words">
                     {header}
                 </h2>
-                <span className="font-mono text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
+                <span className="text-sm sm:text-md md:text-lg lg:text-lg xl:text-xl font-mono text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
                     {description}
                 </span>
             </div>

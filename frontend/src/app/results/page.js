@@ -153,7 +153,7 @@ export default function Results() {
           <div className="text-center mb-8 relative">
             <div className="absolute inset-0 bg-gradient-to-r from-purple-500/10 via-red-500/10 to-orange-500/10 blur-3xl -z-10"/>
 
-            <h1 className="text-4xl -tracking-tight italic font-bold mb-8 bg-gradient-to-r from-purple-400 via-red-400 to-orange-400 bg-clip-text text-transparent">
+            <h1 className="text-3xl sm:text-4xl md:text-4xl lg:text-4xl xl:text-4xl -tracking-tight italic font-bold mb-8 bg-gradient-to-r from-purple-400 via-red-400 to-orange-400 bg-clip-text text-transparent">
               Your DJ Match is...
             </h1>
 
@@ -162,7 +162,7 @@ export default function Results() {
                 header={matchData.dj_match}
                 description={
                   <span className="flex items-center justify-center space-x-2 text-gray-300">
-                    <Clock className="w-4 h-4"/>
+                    <Clock className="w-6 h-6 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-5 lg:h-5"/>
                     <span className="font-mono tracking-tighter">
                       {matchData.timeslot} at{" "}
                       <Link
@@ -172,8 +172,8 @@ export default function Results() {
                         kxsc.org
                       </Link>
                     </span>
-                    <span className="mx-2">•</span>
-                    <Radio className="w-4 h-4"/>
+                    <span className="px-3">•</span>
+                    <Radio className="w-6 h-6 sm:w-4 sm:h-4 md:w-5 md:h-5 lg:w-5 lg:h-5"/>
                     <p className="font-mono tracking-tighter">&ldquo;{matchData.show_name}&rdquo;</p>
                   </span>
                 }
@@ -210,7 +210,7 @@ export default function Results() {
                         className="flex items-center space-x-4 group cursor-pointer"
                     >
                       <div
-                          className="w-12 h-12 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center justify-center group-hover:bg-red-500/20 group-hover:scale-105 transition-all duration-200">
+                          className="p-6 w-12 h-12 bg-red-500/10 border border-red-500/20 rounded-lg flex items-center justify-center group-hover:bg-red-500/20 group-hover:scale-105 transition-all duration-200">
                   <span className="text-red-400 font-mono">
                     {(index + 1).toString().padStart(2, '0')}
                   </span>
