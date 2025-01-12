@@ -50,7 +50,7 @@ export default function Results() {
 
         const response = await fetchWithTimeout('/api/results', 45000);
         if (!response.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error('Network response was not ok. Please try again!');
         }
         const data = await response.json();
 
@@ -95,7 +95,7 @@ export default function Results() {
 
       const response = await fetchWithTimeout('/api/results', 45000);
       if (!response.ok) {
-        throw new Error('Network response was not ok');
+        throw new Error('Network response was not ok. Please try again!');
       }
       const data = await response.json();
 
@@ -244,7 +244,7 @@ export default function Results() {
                 Genres:{" "}
               </span>
                   <span className="text-sm text-red-300/60">
-                Electronic • Jazz • Ambient • Downtempo
+                Your • Favorite • Genres • Here
               </span>
                 </div>
               </div>
