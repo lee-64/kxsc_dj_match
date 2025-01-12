@@ -30,7 +30,7 @@ export default function ChooseMood() {
   };
   return (
     <>
-      <Hero header="Choose Your Mood" description="Select the mood that best matches your current vibe"/>
+      <Hero header="Choose Your Music Mood" description="Select the mood that best matches your current vibe"/>
       <div className="backdrop-blur-sm bg-white/5 border border-white/10 rounded-2xl p-8 mb-16">
         <MoodSelector onMoodSelect={handleMoodSelect} />
         {/* Status Messages */}
