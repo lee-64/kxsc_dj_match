@@ -54,6 +54,7 @@ export default function IncludeArtists() {
         artists_data: artists,
       });
       if (response.status === 200) {
+        await response.data;  // Wait for the response data to be processed
         router.push('/results');
       } else {
         setStatus('error');
