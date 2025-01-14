@@ -77,7 +77,8 @@ class User:
         u_df = pd.DataFrame()
 
         # Append any artists the user submitted
-        if self.artists is not None:
+        if self.artists:
+            print("self.artists:", self.artists)  # Debugging
             # Append artists' top 5 songs + the AcousticBrainz info
             artist_names = [artist['name'] for artist in self.artists]
             artist_mbids = [artist['mbid'] for artist in self.artists]
@@ -85,6 +86,8 @@ class User:
             artists_df = create_artists_df(artist_names, artist_mbids)
 
             u_df = artists_df.copy()
+        else:
+            print("User did not submit any artists")  # Debugging
 
         # Append any songs the user submitted
         # if self.songs is not None:
@@ -134,8 +137,7 @@ def create_artists_df(artist_names, artist_mbids):
         ab_df = acousticbrainz_db.modify_ab_db(mb_df)
         return ab_df
 
-    # TODO
-    return ...
+    return mb_df  # Return empty DataFrame for completeness; this clause should not be encountered though
 
 
 def calculate_probabilistic_scores(df, binary_features, confidence_features):
