@@ -15,11 +15,13 @@ export default function Home() {
           Find Your DJ Match
         </h1>
 
+        <div className="h-24 mb-4">
         <TypingAnimation>
           <p className="font-mono text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
             Discover which KXSC DJ is most <span className="font-semibold text-gray-100">statistically similar</span> to your music taste through our matching algorithm.
           </p>
         </TypingAnimation>
+        </div>
 
         <Link
           href="/choose-mood"
@@ -54,7 +56,7 @@ export default function Home() {
             <div className="w-12 h-12 bg-orange-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Headphones className="w-6 h-6 text-orange-400" />
             </div>
-            <h3 className="text-xl font-semibold mb-2 text-gray-100">Beyond Algorithms</h3>
+            <h3 className="text-xl font-semibold mb-2 text-gray-100">Human-First Curation</h3>
             <p className="text-gray-400">Experience music handpicked by our fantastic DJs</p>
           </div>
         </div>
