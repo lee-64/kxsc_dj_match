@@ -24,6 +24,6 @@ python3.12 -m venv .venv
 # Install requirements
 pip install -r requirements.txt
 
-# Run the app
+# Run the app locally
 python run.py
 ```

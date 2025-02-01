@@ -15,8 +15,11 @@ sp = spotipy.Spotify(auth_manager=auth_manager)
 def get_artist_id(artist_name):
     """
     Search for the artist on Spotify and return their Spotify Artist ID.
+
+    :param artist_name:
+    :return:
     """
-    # TODO Explicitly grab most popular result
+
     results = sp.search(q=artist_name, type='artist', limit=1)
     items = results['artists']['items']
     if not items:
