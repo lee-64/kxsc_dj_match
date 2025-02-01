@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import "./globals.css";
+import { Analytics } from "@vercel/analytics/react"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,7 +38,7 @@ export default function RootLayout({ children }) {
                 </Link>
               </div>
               <Link href="https://kxsc.org"
-                className="underline underline-offset-2 font-mono text-3xl tracking-wider italic font-bold bg-gradient-to-r from-purple-400 via-red-400 to-orange-400 bg-clip-text text-transparent cursor-pointer">
+                className="md:text-xl lg:text-2xl xl:text-2xl underline underline-offset-2 font-mono tracking-wider italic font-bold text-gray-300 cursor-pointer">
                 kxsc.org
               </Link>
             </div>
@@ -47,6 +48,7 @@ export default function RootLayout({ children }) {
           <div className="container mx-auto px-4 py-12 pt-32">
             <main>
               {children}
+              <Analytics />
             </main>
           </div>
         </div>
