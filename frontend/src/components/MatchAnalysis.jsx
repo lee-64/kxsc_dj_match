@@ -1,7 +1,54 @@
 'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
+import {ChevronDown, ChevronRight} from "lucide-react";
 const Plot = dynamic(()=> {return import ("react-plotly.js")}, {ssr: false})
+
+
+function CollapsibleDetails() {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className="text-sm font-light tracking-wide text-red-200/60">
+      <button
+        onClick={() => setIsExpanded(!isExpanded)}
+        className="flex items-center gap-1 hover:text-red-200/80 transition-colors"
+      >
+        {isExpanded ? (
+          <ChevronDown className="w-4 h-4" />
+        ) : (
+          <ChevronRight className="w-4 h-4" />
+        )}
+        <span>Data & Visualization Details</span>
+      </button>
+
+      {isExpanded && (
+        <div className="mt-2 ml-5 space-y-2">
+          <p>
+            Feature values are <i>normalized</i> to ensure consistent scaling across all features,
+            so the magnitude of a category represents its z-score (i.e. how many standard deviations
+            it is from the mean of all DJs' features).
+          </p>
+
+          <p>
+            For example, a sample DJ with a 'Danceability' of -1.0 indicates that the average
+            danceability of tracks played by that DJ are 1 standard deviation below the mean
+            danceability of every track played by all DJs. The conclusion: the DJ created for
+            this example is not a great option (relative to every other KXSC DJ) if you're
+            looking for some tunes to dance to.
+          </p>
+
+          <p>
+            The mood features followed by "_Index" (e.g. Sad Index) are a normalized average
+            of a DJ's high-level mood data confidence. Higher index levels mean that a given
+            DJ likely plays tracks that exhibit greater "Sad" qualities relative to other DJs,
+            and vice versa.
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function MatchAnalysis({ figure }) {
   const containerRef = useRef(null);
@@ -116,19 +163,31 @@ export default function MatchAnalysis({ figure }) {
           How We Matched You
         </h2>
         <div className="space-y-4">
+          <div className="text-lg font-light tracking-wide text-red-200/80">
+          <p>
+            Key audio features from the top tracks of the artists you
+            select are computed to create your <span className="font-semibold italic tracking-wide underline underline-offset-2">unique musical profile</span>.
+            This includes:
+          </p>
+          <ul className="my-3 ml-2 space-y-2">
+            <li className="list-disc list-inside">
+              Your desired mood
+            </li>
+            <li className="list-disc list-inside">
+              Artists you selected from their play history
+            </li>
+            <li className="list-disc list-inside">
+              Audio metadata
+            </li>
+          </ul>
           <p className="text-lg font-light tracking-wide text-red-200/80">
-            The DJ Recommendation Engine begins by extracting key audio features from the top tracks of the artists you
-            select and computes their average to create your unique musical profile. Your feature vector is then transformed by your desired mood, weighting the
-            metric averages with the probabilistic mood scores. Your DJ Match is the KXSC DJ most aligned to this computed musical feature array.
-
+            Your DJ Match is the KXSC DJ most aligned with your musical feature array.
           </p>
-          <p className="text-sm font-light tracking-wide text-red-200/60">
-            Data & Visualization Details: Feature values are <i>normalized</i> to ensure consistent scaling across all features, so the magnitude of a category represents its z-score (i.e. how many standard deviations it is from the mean of all DJs' features).
-            For example, a sample DJ with a 'Danceability' of -1.0 indicates that the average danceability of tracks played by that DJ are 1 standard deviation below the mean danceability of every track played by all DJs. The conclusion: the DJ created for this example is not a great option (relative to every other KXSC DJ) if you're looking for some tunes to dance to.
-            The mood features followed by "_Index" (e.g. Sad Index) are a normalized average of a DJ's high-level mood data confidence. Higher index levels mean that a given DJ likely plays tracks that exhibit greater "Sad" qualities relative to other DJs, and vice versa.
-          </p>
+        </div>
+          <CollapsibleDetails/>
         </div>
       </div>
     </div>
-  );
+);
 }
+
