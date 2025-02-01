@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link'
 import { ChevronRight, Radio, Music, Headphones } from 'lucide-react';
 import TypingAnimation from "@/components/TypingAnimation";
+
 export default function Home() {
   return (
     <div className="relative">
@@ -17,7 +18,7 @@ export default function Home() {
 
         <div className="h-24 mb-4">
         <TypingAnimation>
-          <p className="font-mono text-xl text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
+          <p className="md:text-xl font-mono text-gray-300 mb-12 max-w-2xl mx-auto leading-relaxed">
             Discover which KXSC DJ is most <span className="font-semibold text-gray-100">statistically similar</span> to your music taste through our matching algorithm.
           </p>
         </TypingAnimation>
