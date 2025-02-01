@@ -9,11 +9,21 @@ from .user import User
 from .dj import DJ
 
 
-def get_matches(mood, user_artists, user_tracks):
+def get_matches(mood, user_artists):
+    """
+    Finds and ranks DJ matches based on musical feature similarity and artist overlap.
+
+    :param mood: String indicating user's selected mood
+    :param user_artists: List of dicts containing artist info (mbid, name)
+    :return: (matched_djs, match_features, user_features) where:
+       - matched_djs: List of top 5 DJ matches with name, id, match similarity score, and match score percentage
+       - match_features: Feature array of top DJ match (for visualization)
+       - user_features: Scaled feature array of user profile (for visualization)
+    """
+
     tracks_df = pd.read_csv(os.path.join(os.getcwd(), 'data', 'sliced_ab_data.csv'))
 
-    # TODO future version: include the genres and key major/minor as dummies in calculation
-
+    # TODO UPDATE DJs (Read from new show_responses)
     # Initialize DJs
     djs_list = []
     unique_dj_ids = tracks_df['DJ ID'].unique()
@@ -33,10 +43,8 @@ def get_matches(mood, user_artists, user_tracks):
     dj_scaled_matrix = scaler.transform(dj_matrix)
     user_scaled_vector = scaler.transform(user_vector)
 
-    # TODO if user_vector contains some NA values (eg high-level data get didnt work), cosine similarity will throw error
     feature_similarities = cosine_similarity(user_scaled_vector, dj_scaled_matrix).flatten()  # shape: (num_djs, )
 
-    # TODO Include "same song matches" and "same artist" matches in the calculation. Use song NAME instead of mbid alongside artist_mbid, since there can be multiple mbids for one song (but generally only 1 artist_mbid).
     # Calculate artist overlap scores with frequency weighting
     artist_overlap_scores = np.zeros(len(djs_list))
     for i, dj in enumerate(djs_list):
@@ -64,11 +72,6 @@ def get_matches(mood, user_artists, user_tracks):
     overall_scores = (alpha * feature_similarities + beta * artist_overlap_scores)
 
 
-    # TODO Add genre similarity, much like how users can select a Mood
-
-    # TODO Angular Similarity for further spacing between the top 5 dj matches
-    # ang_similarities = angular_similarity(cos_similarities)
-
     top_n = 5
     top_n_indices = overall_scores.argsort()[-top_n:][::-1]  # Sort in desc order + pick best n
 
@@ -83,8 +86,6 @@ def get_matches(mood, user_artists, user_tracks):
         for i, idx in enumerate(top_n_indices)
     ]
 
-    print(matched_djs)
-
     # The features array (identical to dj.avg_features) of the top DJ match, used for visualization purposes
     match_features = dj_scaled_matrix[top_n_indices][0]
     user_features = user_scaled_vector.flatten()
@@ -92,24 +93,28 @@ def get_matches(mood, user_artists, user_tracks):
     return matched_djs, match_features, user_features
 
 
-def calculate_artist_overlap_score(user_artists, dj_artists):
-    common_artists = len(set(user_artists) & set(dj_artists))
-    total_user_artists = len(user_artists)
-    # Normalize the score between 0 and 1
-    overlap_score = common_artists / total_user_artists if total_user_artists > 0 else 0
-    return overlap_score
-
-
 def angular_similarity(cos_sim):
     """
     Computes an angular similarity matrix from a cosine similarity matrix.
+
     :param cos_sim: The cosine similarity matrix returned from scikit-learn cosine_similarity()
     :return: The angular similarity matrix.
     """
+
     return 1 - math.acos(cos_sim) / math.pi
 
 
 def spider_plot(user_vector, dj_vector, dj_name):
+    """
+   Creates a spider/radar plot overlaying user and DJ musical features.
+
+
+    :param user_vector: Array of user's musical feature values
+    :param dj_vector: Array of DJ's musical feature values
+    :param dj_name: String of DJ's name for plot legend
+    :return: JSON string of Plotly figure object
+    """
+
     # Feature column names from user_vector and dj_vector
     angular_vars = ['danceability', 'bpm', 'instrumental_prob', 'gender_prob', 'tonal_prob', 'timbre_prob', 'electronic_prob', 'party_prob', 'aggressive_prob', 'acoustic_prob', 'happy_prob', 'sad_prob', 'relaxed_prob']
 
@@ -132,29 +137,31 @@ def spider_plot(user_vector, dj_vector, dj_name):
         fill='toself',
         name='You'
     ))
-
     fig.add_trace(go.Scatterpolar(
         r=dj_vector_mod,
         theta=angular_vars,
         fill='toself',
         name=dj_name
     ))
-
     # Disable drag and zoom
     fig.update_layout(
         dragmode=False,
         paper_bgcolor="rgba(0,0,0,0)",
         font_color="white",
     )
-
-    # fig_json = pio.to_json(fig)
     fig_json = fig.to_json()
 
     return fig_json
 
 
 def prettify_theta(column_names):
-    # TODO only show the mood that the user selected
+    """
+    Maps feature names to user-friendly display names.
+
+    :param column_names: List of unmodified column names
+    :return: List of prettified column names for visualization
+    """
+
     name_mapping = {
         'danceability': 'Danceability',
         'bpm': 'Tempo',
@@ -171,7 +178,6 @@ def prettify_theta(column_names):
         'sad_prob': 'Sad Index',
         'relaxed_prob': 'Relaxed Index'
     }
-
     renamed_cols = [name_mapping.get(col) for col in column_names]
 
     return renamed_cols

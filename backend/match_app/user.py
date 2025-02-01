@@ -57,7 +57,6 @@ class User:
             # If the user's DataFrame is empty, meaning the user added no artists or no AcousticBrainz data was found
             if user_df.dropna().empty:
                 print('user_df.dropna() is empty')
-                # TODO add noise so that it doesn't return the same DJ for "relaxed" every time
                 return avg_mood_features
 
             # Calculate the average features vector of the user's tracks
@@ -70,7 +69,6 @@ class User:
             print('Transformed mood features!')
             return transformed_mood_features
 
-        # TODO add return value if the user somehow didn't add a mood. technically not possible but just for completeness
         return ...
 
     def create_user_df(self):
@@ -88,10 +86,6 @@ class User:
             u_df = artists_df.copy()
         else:
             print("User did not submit any artists")  # Debugging
-
-        # Append any songs the user submitted
-        # if self.songs is not None:
-        #     songs_df = ...
 
         u_df.dropna(inplace=True)
         return u_df

@@ -131,7 +131,6 @@ def get_low_level_data(row: pd.Series):
         }
 
 
-# TODO write what this func returns
 # Tries to fetch high-level AcousticBrainz API data for a given mbid (which had low-level data)
 def get_high_level_data(track_mbid):
     ab_high_level_url = f'{ab_base_url}/api/v1/{track_mbid}/high-level'

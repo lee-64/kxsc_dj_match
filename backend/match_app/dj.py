@@ -32,8 +32,6 @@ class DJ:
                                    'sad_confidence',
                                    'relaxed_confidence']
 
-        # TODO explore the differences in accuracy between Probabilistic Score and Weighted Average
-        # Currently this is Probabilistic Score
         tracks_prob = calculate_probabilistic_scores(self.tracks, binary_feature_cols, confidence_feature_cols)
         prob_cols = [col for col in tracks_prob.columns if col.endswith('_prob')]
         cols_to_average = misc_feature_cols + prob_cols
