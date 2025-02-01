@@ -109,7 +109,7 @@ def get_subtext(dj_id, responses):
         if pd.isna(subtext):
             raise ValueError('Subtext is missing')
     except Exception as e:
-        subtext = 'NO SUBTEXT REPLACE'
+        subtext = ''
 
     subtext = subtext.strip()
     return subtext
