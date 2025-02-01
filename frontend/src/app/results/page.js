@@ -237,16 +237,23 @@ export default function Results() {
                   {matchData.about_me}
                 </p>
                 <p className="text-base font-light tracking-wide text-red-200/60">
-                  {matchData.mission_statement}
+                  {matchData.subtext}
                 </p>
-                <div className="pt-4">
-              <span className="text-sm uppercase tracking-widest text-red-400/80">
-                Genres:{" "}
-              </span>
-                  <span className="text-sm text-red-300/60">
-                Your • Favorite • Genres • Here
-              </span>
-                </div>
+                {matchData.genres?.length > 0 && (
+                  <div className="pt-4">
+                    <span className="text-sm uppercase tracking-widest text-red-400/80">
+                      Genres:{" "}
+                    </span>
+                    <span className="text-sm text-red-300/60">
+                      {matchData.genres.map((genre, index) => (
+                        <span key={genre}>
+                          {genre}
+                          {index < matchData.genres.length - 1 && " • "}
+                        </span>
+                      ))}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           </div>
