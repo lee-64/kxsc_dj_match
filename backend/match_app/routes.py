@@ -4,6 +4,7 @@ from .match import get_matches, spider_plot
 from .show_responses import get_dj_show_info
 from .database_connection import get_db
 from dotenv import load_dotenv
+import re
 
 load_dotenv()
 
@@ -84,10 +85,10 @@ def results():
 @app.route('/api/search/artists', methods=['GET'])
 def search_artists():
     """
-    Searches artists collection in MongoDB using text search.
+    Searches artists collection in MongoDB using a combination of query regex matching and (approximate) popularity to
+    find the most relevant artists (up to 3).
 
-    :return: JSON with the first 3 artists' data (MongoDB id, artist name, artist MusicBrainz ID, relevance score),
-    sorted by relevance
+    :return: JSON with the first 3 artists' data (MongoDB _id, artist name, artist MusicBrainz ID), sorted by relevance
     """
 
     query = request.args.get('query')
@@ -98,17 +99,23 @@ def search_artists():
     client = get_db()
     artists_collection = client['artists']['artist_names_and_mbids']
 
-    artists_collection.create_index([('name', 'text')])  # Create a text index on the name field
-    artists_data = list(artists_collection.find(
-        {"$text": {"$search": query}},
-        {"score": {"$meta": "textScore"}}
-    ).sort([
-        ("score", {"$meta": "textScore"})
-    ]).limit(3))
+    regex_pattern = f"^{re.escape(query)}"
+    try:
+        # artists_collection.create_index([('name', 'text')])  # Create a text index on name field if it doesn't exist
+        # Search for regex matches and sort the results by popularity
+        artists_data = list(artists_collection.find(
+            {"name": {"$regex": regex_pattern, "$options": "i"}},  # Case-insensitive
+            {"name": 1, "mbid": 1}
+        ).sort([("_id", 1)]).limit(3))  # _id acts as a proxy for popularity because documents are in descending popularity (approximately) order
 
-    # Clean up the ObjectId for JSON serialization
-    for artist in artists_data:
-        artist['_id'] = str(artist['_id'])
+        # Clean up the ObjectId for JSON serialization
+        for artist in artists_data:
+            artist['_id'] = str(artist['_id'])
 
-    client.close()  # Close the connection
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+    finally:
+        client.close()
+
     return jsonify({'artists_data': artists_data}), 200
