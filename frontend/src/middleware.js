@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-const WARP_TO_HOME_ENABLED = true;
+const WARP_TO_HOME_ENABLED = false;
 
 export function middleware(request) {
   const { pathname } = request.nextUrl;
