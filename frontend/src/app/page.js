@@ -28,11 +28,11 @@ export default function Home() {
 
 
         {/*Temporarily Paused Services display box*/}
-        <div className="p-4 border border-red-400 text-red-400 rounded-md max-w-md mx-auto mb-4">
+        {/* <div className="p-4 border border-red-400 text-red-400 rounded-md max-w-md mx-auto mb-4">
           <p className="font-semibold text-center italic">
             DJ Match services have been paused over the Summer and will resume next semester in Fall 2025
           </p>
-        </div>
+        </div> */}
 
 
         <Link
